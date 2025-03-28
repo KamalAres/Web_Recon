@@ -1,4 +1,13 @@
 import requests
+import socket
+from urllib.parse import urlparse
+
+def resolve_hostname_to_ip(hostname):
+    try:
+        ip_address = socket.gethostbyname(hostname)
+        print(f"Hostname: {hostname}\nResolved IP Address: {ip_address}")
+    except socket.gaierror:
+        print(f"Error: Unable to resolve {hostname} to an IP address.")
 
 def check_security_headers(url):
     try:
@@ -41,7 +50,13 @@ def check_cors_headers(url):
     except requests.exceptions.RequestException as e:
         print(f"Error: {e}")
 
+def strip_url(url):
+    parsed_url = urlparse(url)
+    return parsed_url.hostname if parsed_url.hostname else url
+
 if __name__ == "__main__":
     target_url = input("Enter website URL (including http/https): ")
     check_security_headers(target_url)
     check_cors_headers(target_url)
+    hostname = strip_url(target_url)
+    resolve_hostname_to_ip(hostname)
