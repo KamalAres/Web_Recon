@@ -1,9 +1,15 @@
 import scrapy
 import json
 import re
+import os
+import sys
 from urllib.parse import urlparse
 from scrapy.crawler import CrawlerProcess
 from scrapy.downloadermiddlewares.offsite import OffsiteMiddleware
+
+# Add parent directory to path to import crt module
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from crt import get_subdomains
 
 class CustomOffsiteMiddleware(OffsiteMiddleware):
     def should_follow(self, request, spider):
@@ -16,11 +22,13 @@ class CustomOffsiteMiddleware(OffsiteMiddleware):
 class WebReconSpider(scrapy.Spider):
     name = 'ReconSpider'
     
-    def __init__(self, start_url, *args, **kwargs):
+    def __init__(self, start_url, enum_subdomains=False, wordlist_path=None, *args, **kwargs):
         super(WebReconSpider, self).__init__(*args, **kwargs)
         self.start_urls = [start_url]
         self.allowed_domains = [urlparse(start_url).netloc.split(':')[0]]
         self.visited_urls = set()
+        self.enum_subdomains = enum_subdomains
+        self.wordlist_path = wordlist_path
         self.results = {
             'emails': set(),
             'links': set(),
@@ -31,6 +39,7 @@ class WebReconSpider(scrapy.Spider):
             'videos': set(),
             'audio': set(),
             'comments': set(),
+            'subdomains': set(),
         }
         
     def parse(self, response):
@@ -95,6 +104,19 @@ class WebReconSpider(scrapy.Spider):
 
     def closed(self, reason):
         self.log("Crawl finished, converting results to JSON.")
+        
+        # Perform subdomain enumeration if requested
+        if self.enum_subdomains:
+            hostname = self.allowed_domains[0]
+            self.log(f"Performing subdomain enumeration for {hostname}")
+            
+            # Determine method based on wordlist_path
+            method = 'wordlist' if self.wordlist_path else 'crt'
+            subdomains = get_subdomains(hostname, method=method, wordlist_path=self.wordlist_path)
+            
+            self.results['subdomains'].update(subdomains)
+            self.log(f"Found {len(subdomains)} subdomains")
+        
         # Convert sets to lists for JSON serialization
         for key in self.results:
             self.results[key] = list(self.results[key])
@@ -104,14 +126,14 @@ class WebReconSpider(scrapy.Spider):
 
         self.log(f"Results saved to results.json")
 
-def run_crawler(start_url):
+def run_crawler(start_url, enum_subdomains=False, wordlist_path=None):
     process = CrawlerProcess(settings={
         'LOG_LEVEL': 'INFO',
         'DOWNLOADER_MIDDLEWARES': {
             '__main__.CustomOffsiteMiddleware': 500,
         }
     })
-    process.crawl(WebReconSpider, start_url=start_url)
+    process.crawl(WebReconSpider, start_url=start_url, enum_subdomains=enum_subdomains, wordlist_path=wordlist_path)
     process.start()
 
 if __name__ == "__main__":
@@ -119,6 +141,8 @@ if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description="ReconSpider")
     parser.add_argument("start_url", help="The starting URL for the web crawler")
+    parser.add_argument("--enum-subdomains", action="store_true", help="Perform subdomain enumeration")
+    parser.add_argument("--wordlist", help="Path to subdomain wordlist (if not provided, will use certificate transparency logs)")
     args = parser.parse_args()
     
-    run_crawler(args.start_url)
+    run_crawler(args.start_url, enum_subdomains=args.enum_subdomains, wordlist_path=args.wordlist)
