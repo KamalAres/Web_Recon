@@ -8,6 +8,7 @@ from unittest.mock import patch, MagicMock
 import io
 import sys
 import os
+import tempfile
 from contextlib import redirect_stdout
 
 # Import the module to test
@@ -18,9 +19,9 @@ class TestSubdomainEnum(unittest.TestCase):
     
     def setUp(self):
         """Set up test environment"""
-        # Create a temporary test wordlist
-        self.test_wordlist = "/tmp/test_wordlist.txt"
-        with open(self.test_wordlist, "w") as f:
+        # Create a temporary test wordlist using tempfile for cross-platform compatibility
+        fd, self.test_wordlist = tempfile.mkstemp(suffix=".txt", prefix="test_wordlist_")
+        with os.fdopen(fd, 'w') as f:
             f.write("www\nmail\ntest\nadmin\n")
     
     def tearDown(self):

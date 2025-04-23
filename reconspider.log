@@ -1,0 +1,63 @@
+2025-04-22 18:46:18,768 - ReconSpider - WARNING - No API keys file provided or file not found. Some features may be limited.
+2025-04-22 18:46:18,770 - ReconSpider - INFO - Initializing ReconSpider for domain: example.com
+2025-04-22 18:46:18,773 - ReconSpider - INFO - Starting reconnaissance process
+2025-04-22 18:46:18,773 - ReconSpider - INFO - Starting subdomain enumeration
+2025-04-22 18:46:23,461 - ReconSpider - INFO - Found 4 subdomains
+2025-04-22 18:46:23,462 - ReconSpider - INFO - Starting port scanning
+2025-04-22 18:46:43,510 - ReconSpider - INFO - Port scanning completed
+2025-04-22 18:46:43,511 - ReconSpider - INFO - Starting technology fingerprinting
+2025-04-22 18:47:04,584 - ReconSpider - INFO - Technology fingerprinting completed
+2025-04-22 18:47:04,585 - ReconSpider - INFO - Starting security checks
+2025-04-22 18:47:45,267 - ReconSpider - INFO - Found 17 security issues
+2025-04-22 18:47:45,273 - ReconSpider - INFO - Raw results saved to ./output\example.com_results.json
+2025-04-22 18:47:45,274 - ReconSpider - INFO - Generating reports in formats: ['text', 'html', 'pdf']
+2025-04-22 18:47:45,274 - ReconSpider - INFO - Report generated: text_report.txt
+2025-04-22 18:47:45,275 - ReconSpider - INFO - Report generated: html_report.html
+2025-04-22 18:47:45,275 - ReconSpider - INFO - Report generated: pdf_report.pdf
+2025-04-22 18:47:45,276 - ReconSpider - INFO - Generating visualization
+2025-04-22 18:47:48,501 - matplotlib.font_manager - INFO - generated new fontManager
+2025-04-22 18:47:50,662 - ReconSpider - INFO - Visualization generated: None
+2025-04-22 18:47:50,662 - ReconSpider - INFO - Reconnaissance completed in 91.89 seconds
+2025-04-23 13:03:25,128 - ReconSpider - WARNING - No API keys file provided or file not found. Some features may be limited.
+2025-04-23 13:03:25,129 - ReconSpider - INFO - Initializing ReconSpider for domain: example.com
+2025-04-23 13:03:25,130 - ReconSpider - INFO - Starting reconnaissance process
+2025-04-23 13:03:25,131 - ReconSpider - INFO - Starting subdomain enumeration
+2025-04-23 13:03:29,402 - ReconSpider - INFO - Found 4 subdomains
+2025-04-23 13:03:29,402 - ReconSpider - INFO - Starting port scanning
+2025-04-23 13:03:49,447 - ReconSpider - INFO - Port scanning completed
+2025-04-23 13:03:49,447 - ReconSpider - INFO - Starting technology fingerprinting
+2025-04-23 13:03:52,456 - ReconSpider - INFO - Technology fingerprinting completed
+2025-04-23 13:03:52,457 - ReconSpider - INFO - Starting security checks
+2025-04-23 13:04:28,090 - ReconSpider - INFO - Found 17 security issues
+2025-04-23 13:04:28,092 - ReconSpider - INFO - Raw results saved to ./output\example.com_results.json
+2025-04-23 13:04:28,092 - ReconSpider - INFO - Generating reports in formats: ['text', 'html', 'pdf']
+2025-04-23 13:04:28,093 - ReconSpider - INFO - Report generated: text_report.txt
+2025-04-23 13:04:28,093 - ReconSpider - INFO - Report generated: html_report.html
+2025-04-23 13:04:28,093 - ReconSpider - INFO - Report generated: pdf_report.pdf
+2025-04-23 13:04:28,093 - ReconSpider - INFO - Generating visualization
+2025-04-23 13:04:29,899 - ReconSpider - INFO - Visualization generated: None
+2025-04-23 13:04:29,899 - ReconSpider - INFO - Reconnaissance completed in 64.77 seconds
+2025-04-23 14:49:34,025 - ReconSpider - WARNING - No API keys file provided or file not found. Some features may be limited.
+2025-04-23 14:49:34,027 - ReconSpider - INFO - Initializing ReconSpider for domain: example.com
+2025-04-23 14:49:34,027 - ReconSpider - INFO - Starting reconnaissance process
+2025-04-23 14:49:34,027 - ReconSpider - INFO - Starting subdomain enumeration
+2025-04-23 14:49:37,906 - ReconSpider - INFO - Found 4 subdomains
+2025-04-23 14:49:37,906 - ReconSpider - INFO - Starting port scanning
+2025-04-23 14:49:57,928 - ReconSpider - INFO - Port scanning completed
+2025-04-23 14:49:57,928 - ReconSpider - INFO - Starting technology fingerprinting
+2025-04-23 14:50:01,024 - ReconSpider - INFO - Technology fingerprinting completed
+2025-04-23 14:50:01,025 - ReconSpider - INFO - Starting security checks
+2025-04-23 14:50:58,846 - ReconSpider - INFO - Found 17 security issues
+2025-04-23 14:50:58,847 - ReconSpider - INFO - Starting web crawling
+2025-04-23 14:50:59,590 - WebCrawler - INFO - Starting web crawl for https://example.com
+2025-04-23 14:51:00,093 - WebCrawler - INFO - Crawling: https://example.com (depth: 0)
+2025-04-23 14:51:00,856 - WebCrawler - INFO - Crawl completed: 1 pages crawled
+2025-04-23 14:51:00,857 - ReconSpider - INFO - Web crawling completed: 1 pages crawled
+2025-04-23 14:51:00,864 - ReconSpider - INFO - Raw results saved to ./output\example.com_results.json
+2025-04-23 14:51:00,865 - ReconSpider - INFO - Generating reports in formats: ['text', 'html', 'pdf']
+2025-04-23 14:51:00,865 - ReconSpider - INFO - Report generated: text_report.txt
+2025-04-23 14:51:00,866 - ReconSpider - INFO - Report generated: html_report.html
+2025-04-23 14:51:00,866 - ReconSpider - INFO - Report generated: pdf_report.pdf
+2025-04-23 14:51:00,867 - ReconSpider - INFO - Generating visualization
+2025-04-23 14:51:03,638 - ReconSpider - INFO - Visualization generated: None
+2025-04-23 14:51:03,639 - ReconSpider - INFO - Reconnaissance completed in 89.61 seconds

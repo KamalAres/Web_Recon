@@ -1,0 +1,16 @@
+{
+    "domain": "example.com",
+    "base_url": "https://example.com",
+    "pages_crawled": 1,
+    "site_map": {},
+    "resources": {},
+    "page_data": {
+        "https://example.com": {
+            "title": "Example Domain",
+            "description": "",
+            "depth": 0,
+            "links_count": 0,
+            "content_length": 1256
+        }
+    }
+}

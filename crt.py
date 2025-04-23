@@ -1,28 +1,166 @@
+#!/usr/bin/env python3
+"""
+Certificate Transparency Log Module
+
+This module provides functionality for retrieving subdomains from certificate transparency logs
+and performing wordlist-based subdomain enumeration.
+"""
+
 import requests
-import json
 import socket
 import os
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import concurrent.futures
+import time
+import json
+from urllib.parse import urlparse
 
-def get_subdomains_from_crt(hostname):
+def get_subdomains(domain, method='crt', wordlist_path=None):
     """
-    Get subdomains using certificate transparency logs from crt.sh
+    Get subdomains for a domain using specified method
+    
+    Args:
+        domain (str): The target domain (e.g., example.com)
+        method (str): Method to use ('crt' or 'wordlist')
+        wordlist_path (str): Path to wordlist file for wordlist method
+    
+    Returns:
+        list: List of discovered subdomains
     """
-    url = f"https://crt.sh/?q={hostname}&output=json"
+    print(f"Getting subdomains for {domain} using {method} method")
+    
+    if method == 'crt':
+        return get_subdomains_from_crt(domain)
+    elif method == 'wordlist':
+        return get_subdomains_from_wordlist(domain, wordlist_path)
+    else:
+        print(f"Error: Unknown method '{method}'. Using crt method instead.")
+        return get_subdomains_from_crt(domain)
+
+def get_subdomains_from_crt(domain):
+    """
+    Get subdomains from certificate transparency logs
+    
+    Args:
+        domain (str): The target domain (e.g., example.com)
+    
+    Returns:
+        list: List of discovered subdomains
+    """
+    print(f"Searching certificate transparency logs for {domain}")
+    
+    subdomains = set()
+    
     try:
-        response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+        # Query crt.sh for certificates
+        url = f"https://crt.sh/?q=%.{domain}&output=json"
+        response = requests.get(url, timeout=30)
+        
         if response.status_code == 200:
-            data = response.json()
-            subdomains = sorted(set(entry["name_value"] for entry in data if "name_value" in entry))
-            return subdomains
+            try:
+                data = response.json()
+                
+                # Process each certificate
+                for cert in data:
+                    # Get the name value which may contain multiple subdomains
+                    name_value = cert.get('name_value', '')
+                    
+                    # Split by newlines and handle wildcards
+                    for subdomain in name_value.split('\\n'):
+                        subdomain = subdomain.strip()
+                        
+                        # Skip empty subdomains
+                        if not subdomain:
+                            continue
+                        
+                        # Handle wildcards
+                        if subdomain.startswith('*'):
+                            continue
+                        
+                        # Ensure it's a subdomain of the target domain
+                        if subdomain.endswith(f".{domain}") and subdomain != domain:
+                            # Check if the subdomain resolves
+                            try:
+                                socket.gethostbyname(subdomain)
+                                subdomains.add(subdomain)
+                                print(f"Found subdomain: {subdomain}")
+                            except socket.gaierror:
+                                # Subdomain doesn't resolve, skip it
+                                pass
+                        elif subdomain == domain:
+                            # Add the main domain
+                            subdomains.add(subdomain)
+            except json.JSONDecodeError:
+                print("Error: Invalid JSON response from crt.sh")
         else:
-            return [f"Error: Unable to fetch data, status code {response.status_code}"]
+            print(f"Error: HTTP {response.status_code} response from crt.sh")
+    
     except requests.exceptions.RequestException as e:
-        return [f"Error: {e}"]
+        print(f"Error querying crt.sh: {str(e)}")
+    
+    print(f"Found {len(subdomains)} subdomains from certificate transparency logs")
+    return list(subdomains)
+
+def get_subdomains_from_wordlist(domain, wordlist_path=None):
+    """
+    Get subdomains using wordlist-based enumeration
+    
+    Args:
+        domain (str): The target domain (e.g., example.com)
+        wordlist_path (str): Path to wordlist file
+    
+    Returns:
+        list: List of discovered subdomains
+    """
+    # Use default wordlist if none provided
+    if not wordlist_path or not os.path.exists(wordlist_path):
+        wordlist_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'default_subdomains.txt')
+        print(f"Using default wordlist: {wordlist_path}")
+    
+    print(f"Performing wordlist-based enumeration for {domain} using {wordlist_path}")
+    
+    subdomains = set()
+    
+    try:
+        # Read wordlist
+        with open(wordlist_path, 'r') as f:
+            prefixes = [line.strip() for line in f if line.strip()]
+        
+        print(f"Loaded {len(prefixes)} prefixes from wordlist")
+        
+        # Generate potential subdomains
+        potential_subdomains = [f"{prefix}.{domain}" for prefix in prefixes]
+        
+        # Check subdomains in parallel
+        with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+            future_to_subdomain = {
+                executor.submit(is_subdomain_resolvable, subdomain): subdomain 
+                for subdomain in potential_subdomains
+            }
+            
+            for future in concurrent.futures.as_completed(future_to_subdomain):
+                subdomain = future_to_subdomain[future]
+                try:
+                    if future.result():
+                        subdomains.add(subdomain)
+                        print(f"Found subdomain: {subdomain}")
+                except Exception as e:
+                    print(f"Error checking {subdomain}: {str(e)}")
+    
+    except Exception as e:
+        print(f"Error during wordlist enumeration: {str(e)}")
+    
+    print(f"Found {len(subdomains)} subdomains from wordlist")
+    return list(subdomains)
 
 def is_subdomain_resolvable(subdomain):
     """
     Check if a subdomain resolves to an IP address
+    
+    Args:
+        subdomain (str): The subdomain to check
+    
+    Returns:
+        bool: True if the subdomain resolves, False otherwise
     """
     try:
         socket.gethostbyname(subdomain)
@@ -30,76 +168,29 @@ def is_subdomain_resolvable(subdomain):
     except socket.gaierror:
         return False
 
-def get_subdomains_from_wordlist(hostname, wordlist_path=None):
-    """
-    Get subdomains by trying common subdomain names from a wordlist
-    """
-    # Use default wordlist if none provided
-    if not wordlist_path or not os.path.exists(wordlist_path):
-        wordlist_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'default_subdomains.txt')
-        if not os.path.exists(wordlist_path):
-            return [f"Error: Default wordlist not found at {wordlist_path}"]
-    
-    try:
-        with open(wordlist_path, 'r') as f:
-            prefixes = [line.strip() for line in f if line.strip()]
-    except Exception as e:
-        return [f"Error: Failed to read wordlist - {str(e)}"]
-    
-    valid_subdomains = []
-    potential_subdomains = [f"{prefix}.{hostname}" for prefix in prefixes]
-    
-    print(f"Testing {len(potential_subdomains)} potential subdomains...")
-    
-    # Use ThreadPoolExecutor for parallel resolution
-    with ThreadPoolExecutor(max_workers=20) as executor:
-        future_to_subdomain = {executor.submit(is_subdomain_resolvable, subdomain): subdomain for subdomain in potential_subdomains}
-        
-        # Process results as they complete
-        for i, future in enumerate(as_completed(future_to_subdomain)):
-            subdomain = future_to_subdomain[future]
-            if i % 10 == 0:  # Progress update every 10 subdomains
-                print(f"Progress: {i}/{len(potential_subdomains)} subdomains tested")
-            try:
-                if future.result():
-                    valid_subdomains.append(subdomain)
-                    print(f"Found valid subdomain: {subdomain}")
-            except Exception as e:
-                print(f"Error checking {subdomain}: {str(e)}")
-    
-    return sorted(valid_subdomains)
-
-def get_subdomains(hostname, method='crt', wordlist_path=None):
-    """
-    Get subdomains using the specified method
-    """
-    if method.lower() == 'wordlist':
-        return get_subdomains_from_wordlist(hostname, wordlist_path)
-    else:  # Default to crt.sh
-        return get_subdomains_from_crt(hostname)
-
 if __name__ == "__main__":
-    hostname = input("Enter hostname (e.g., example.com): ")
+    import argparse
     
-    print("\nSelect subdomain enumeration method:")
-    print("1. Certificate Transparency Logs (crt.sh)")
-    print("2. Wordlist-based enumeration")
+    parser = argparse.ArgumentParser(description='Subdomain enumeration tool')
+    parser.add_argument('-d', '--domain', required=True, help='Target domain (e.g., example.com)')
+    parser.add_argument('-m', '--method', choices=['crt', 'wordlist'], default='crt', 
+                      help='Method to use (crt or wordlist)')
+    parser.add_argument('-w', '--wordlist', help='Path to wordlist file (for wordlist method)')
+    parser.add_argument('-o', '--output', help='Output file for results')
     
-    choice = input("\nEnter your choice (1 or 2): ")
+    args = parser.parse_args()
     
-    if choice == '2':
-        custom_wordlist = input("\nEnter path to custom wordlist (leave empty for default): ")
-        if custom_wordlist and not os.path.exists(custom_wordlist):
-            print(f"Warning: Wordlist not found at {custom_wordlist}, using default wordlist")
-            custom_wordlist = None
-        
-        print("\nEnumerating subdomains using wordlist...")
-        subdomains = get_subdomains(hostname, method='wordlist', wordlist_path=custom_wordlist)
-    else:
-        print("\nEnumerating subdomains using certificate transparency logs...")
-        subdomains = get_subdomains(hostname, method='crt')
+    # Get subdomains
+    subdomains = get_subdomains(args.domain, args.method, args.wordlist)
     
-    print("\nSubdomains found:")
-    print(f"Number of subdomains found: {len(subdomains)}")
+    # Print results
+    print(f"\nFound {len(subdomains)} subdomains for {args.domain}:")
     for subdomain in subdomains:
         print(subdomain)
+    
+    # Save results if output file specified
+    if args.output:
+        with open(args.output, 'w') as f:
+            for subdomain in subdomains:
+                f.write(f"{subdomain}\n")
+        print(f"\nResults saved to {args.output}")

@@ -1,0 +1,230 @@
+{
+    "domain": "example.com",
+    "scan_date": "2025-04-23 14:49:34",
+    "subdomains": [
+        "example.com\nm.testexample.com\nwww.example.com",
+        "example.com\nwww.example.com",
+        "www.example.com",
+        "dev.example.com\nexample.com\nproducts.example.com\nsupport.example.com\nwww.example.com"
+    ],
+    "ports": {
+        "example.com": {
+            "80": {
+                "service": "HTTP (AkamaiGHost)",
+                "banner": "HTTP/1.0 400 Bad Request\r\nServer: AkamaiGHost\r\nMime-Version: 1.0\r\nContent-Type: text/html\r\nContent-Length: 310\r\nExpires: Wed, 23 Apr 2025 09:19:39 GMT\r\nDate: Wed, 23 Apr 2025 09:19:39 GMT\r\nConnection: close"
+            },
+            "443": {
+                "service": "HTTPS",
+                "banner": ""
+            }
+        },
+        "example.com\nm.testexample.com\nwww.example.com": {},
+        "example.com\nwww.example.com": {},
+        "www.example.com": {
+            "443": {
+                "service": "HTTPS",
+                "banner": ""
+            },
+            "80": {
+                "service": "HTTP (AkamaiGHost)",
+                "banner": "HTTP/1.0 400 Bad Request\r\nServer: AkamaiGHost\r\nMime-Version: 1.0\r\nContent-Type: text/html\r\nContent-Length: 308\r\nExpires: Wed, 23 Apr 2025 09:19:50 GMT\r\nDate: Wed, 23 Apr 2025 09:19:50 GMT\r\nConnection: close"
+            }
+        },
+        "dev.example.com\nexample.com\nproducts.example.com\nsupport.example.com\nwww.example.com": {}
+    },
+    "technologies": {
+        "example.com": {
+            "server": {},
+            "cms": {},
+            "js_frameworks": {},
+            "web_frameworks": {},
+            "analytics": {},
+            "other": {}
+        },
+        "https://example.com": {
+            "server": {},
+            "cms": {},
+            "js_frameworks": {},
+            "web_frameworks": {},
+            "analytics": {},
+            "other": {}
+        },
+        "example.com\nm.testexample.com\nwww.example.com": {
+            "server": {},
+            "cms": {},
+            "js_frameworks": {},
+            "web_frameworks": {},
+            "analytics": {},
+            "other": {}
+        },
+        "example.com\nwww.example.com": {
+            "server": {},
+            "cms": {},
+            "js_frameworks": {},
+            "web_frameworks": {},
+            "analytics": {},
+            "other": {}
+        },
+        "www.example.com": {
+            "server": {},
+            "cms": {},
+            "js_frameworks": {},
+            "web_frameworks": {},
+            "analytics": {},
+            "other": {}
+        },
+        "dev.example.com\nexample.com\nproducts.example.com\nsupport.example.com\nwww.example.com": {
+            "server": {},
+            "cms": {},
+            "js_frameworks": {},
+            "web_frameworks": {},
+            "analytics": {},
+            "other": {}
+        }
+    },
+    "security_issues": [
+        {
+            "title": "Missing Strict-Transport-Security Header",
+            "description": "HTTP Strict Transport Security (HSTS) prevents man-in-the-middle attacks",
+            "severity": "Medium",
+            "recommendation": "Add 'Strict-Transport-Security: max-age=31536000; includeSubDomains' header",
+            "url": "https://example.com"
+        },
+        {
+            "title": "Missing Content-Security-Policy Header",
+            "description": "Content Security Policy (CSP) helps prevent XSS attacks",
+            "severity": "Medium",
+            "recommendation": "Implement a Content Security Policy",
+            "url": "https://example.com"
+        },
+        {
+            "title": "Missing X-Frame-Options Header",
+            "description": "X-Frame-Options prevents clickjacking attacks",
+            "severity": "Medium",
+            "recommendation": "Add 'X-Frame-Options: DENY' or 'X-Frame-Options: SAMEORIGIN' header",
+            "url": "https://example.com"
+        },
+        {
+            "title": "Missing X-Content-Type-Options Header",
+            "description": "X-Content-Type-Options prevents MIME type sniffing",
+            "severity": "Medium",
+            "recommendation": "Add 'X-Content-Type-Options: nosniff' header",
+            "url": "https://example.com"
+        },
+        {
+            "title": "Missing Referrer-Policy Header",
+            "description": "Referrer-Policy controls how much referrer information is shared",
+            "severity": "Medium",
+            "recommendation": "Add 'Referrer-Policy: no-referrer' or 'Referrer-Policy: same-origin' header",
+            "url": "https://example.com"
+        },
+        {
+            "title": "Missing Permissions-Policy Header",
+            "description": "Permissions-Policy restricts browser features",
+            "severity": "Medium",
+            "recommendation": "Implement a Permissions-Policy to restrict browser features",
+            "url": "https://example.com"
+        },
+        {
+            "title": "Missing X-XSS-Protection Header",
+            "description": "X-XSS-Protection helps prevent XSS attacks in older browsers",
+            "severity": "Medium",
+            "recommendation": "Add 'X-XSS-Protection: 1; mode=block' header",
+            "url": "https://example.com"
+        },
+        {
+            "title": "HTTPS Not Available",
+            "description": "The server does not support HTTPS",
+            "severity": "High",
+            "recommendation": "Implement HTTPS with a valid SSL certificate",
+            "url": "http://example.com\nm.testexample.com\nwww.example.com"
+        },
+        {
+            "title": "HTTPS Not Available",
+            "description": "The server does not support HTTPS",
+            "severity": "High",
+            "recommendation": "Implement HTTPS with a valid SSL certificate",
+            "url": "http://example.com\nwww.example.com"
+        },
+        {
+            "title": "Missing Strict-Transport-Security Header",
+            "description": "HTTP Strict Transport Security (HSTS) prevents man-in-the-middle attacks",
+            "severity": "Medium",
+            "recommendation": "Add 'Strict-Transport-Security: max-age=31536000; includeSubDomains' header",
+            "url": "https://www.example.com"
+        },
+        {
+            "title": "Missing Content-Security-Policy Header",
+            "description": "Content Security Policy (CSP) helps prevent XSS attacks",
+            "severity": "Medium",
+            "recommendation": "Implement a Content Security Policy",
+            "url": "https://www.example.com"
+        },
+        {
+            "title": "Missing X-Frame-Options Header",
+            "description": "X-Frame-Options prevents clickjacking attacks",
+            "severity": "Medium",
+            "recommendation": "Add 'X-Frame-Options: DENY' or 'X-Frame-Options: SAMEORIGIN' header",
+            "url": "https://www.example.com"
+        },
+        {
+            "title": "Missing X-Content-Type-Options Header",
+            "description": "X-Content-Type-Options prevents MIME type sniffing",
+            "severity": "Medium",
+            "recommendation": "Add 'X-Content-Type-Options: nosniff' header",
+            "url": "https://www.example.com"
+        },
+        {
+            "title": "Missing Referrer-Policy Header",
+            "description": "Referrer-Policy controls how much referrer information is shared",
+            "severity": "Medium",
+            "recommendation": "Add 'Referrer-Policy: no-referrer' or 'Referrer-Policy: same-origin' header",
+            "url": "https://www.example.com"
+        },
+        {
+            "title": "Missing Permissions-Policy Header",
+            "description": "Permissions-Policy restricts browser features",
+            "severity": "Medium",
+            "recommendation": "Implement a Permissions-Policy to restrict browser features",
+            "url": "https://www.example.com"
+        },
+        {
+            "title": "Missing X-XSS-Protection Header",
+            "description": "X-XSS-Protection helps prevent XSS attacks in older browsers",
+            "severity": "Medium",
+            "recommendation": "Add 'X-XSS-Protection: 1; mode=block' header",
+            "url": "https://www.example.com"
+        },
+        {
+            "title": "HTTPS Not Available",
+            "description": "The server does not support HTTPS",
+            "severity": "High",
+            "recommendation": "Implement HTTPS with a valid SSL certificate",
+            "url": "http://dev.example.com\nexample.com\nproducts.example.com\nsupport.example.com\nwww.example.com"
+        }
+    ],
+    "threat_intel": {},
+    "crawl_data": {
+        "domain": "example.com",
+        "base_url": "https://example.com",
+        "pages_crawled": 1,
+        "site_map": {},
+        "resources": {},
+        "page_data": {
+            "https://example.com": {
+                "title": "Example Domain",
+                "description": "",
+                "depth": 0,
+                "links_count": 0,
+                "content_length": 1256
+            }
+        }
+    },
+    "summary": {
+        "total_subdomains": 4,
+        "total_open_ports": 4,
+        "total_security_issues": 17,
+        "total_pages_crawled": 1,
+        "scan_duration": 86.83013200759888
+    }
+}
